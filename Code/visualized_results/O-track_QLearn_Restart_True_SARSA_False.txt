@@ -1,0 +1,5 @@
+Training Episodes: 619 
+Training time: 2.341625452041626 
+AVG Walls hit: 0.0 
+AVG moves: 4.5 
+AVG time: 0.00127492 
