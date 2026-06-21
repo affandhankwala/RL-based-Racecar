@@ -1,15 +1,81 @@
+# RL-based Racecar
+
+A reinforcement-learning project that teaches a racecar to drive a track as fast as possible, comparing
+**Value Iteration**, **Q-Learning**, and **SARSA** across several track layouts.
+
 ## Introduction
-This project is in accordance with Johns Hopkins Introduction to Machine Learning course number 605.649. 
+
+This project was completed for Johns Hopkins University's *Introduction to Machine Learning* course
+(605.649).
 
 ## Problem Statement
-Given a track represented as a 2D array of strings, we were tasked with developing a reinforcement learning based racecar that would optimally traverse the track. 
 
-The racecar has an ($x_t$, $y_t$) position correlating with the track coordinate, a ($v_{xt}$, $v_{yt}$) velocity vector bound by (±5, ±5) and an ($a_{xt}$, $a_{yt}$) acceleration vector. 
+Given a track represented as a 2D grid of characters, the goal is to train an agent that drives a racecar
+optimally from the start line to the finish line.
 
-The agent can control the racecar only by altering the acceleration vector where each component can be either -1, 0, or 1. Hitting the wall allows resets the racecar to either the closest track position to the impacted wall or the starting line depending on whether a flag is set. 
+The car's state consists of:
 
-## Methodologies
-Three racecar controlling agents were implemented. A value iteration, Q learner and a SARSA based learner. We also had to test our racecar on the provided L, O, R and W race track text files provided. 
+- **Position** $(x_t, y_t)$ — a coordinate on the track.
+- **Velocity** $(v_{x_t}, v_{y_t})$ — bounded to $[-5, +5]$ on each axis.
+- **Acceleration** $(a_{x_t}, a_{y_t})$ — the only thing the agent controls.
+
+Each acceleration component can be set to `-1`, `0`, or `+1` per step. When the car hits a wall it is
+reset either to the **nearest track cell to the impact** or to the **starting line**, depending on a
+configurable crash flag.
+
+## Methodology
+
+Three control algorithms are implemented and compared:
+
+- **Value Iteration** — model-based dynamic programming.
+- **Q-Learning** — off-policy temporal-difference control.
+- **SARSA** — on-policy temporal-difference control.
+
+Each agent is evaluated on the four provided tracks — **L**, **O**, **R**, and **W** — under both crash
+behaviours (reset-to-nearest vs. reset-to-start).
+
+## Repository Structure
+
+```
+RL-based-Racecar/
+├── README.md
+├── Report.pdf                       # Full report
+└── Code/
+    ├── data.xlsx                    # Tabulated results
+    ├── src/
+    │   ├── main.py                  # Entry point: configures parameters and runs all tests
+    │   ├── test.py                  # Drives experiments across tracks / algorithms
+    │   ├── track.py                 # Track loading and representation
+    │   ├── racecar.py               # Racecar dynamics (position / velocity / acceleration)
+    │   ├── value_iteration.py       # Value Iteration solver
+    │   ├── learning_model.py        # Q-Learning / SARSA training
+    │   ├── learning_table.py        # Q-table representation
+    │   ├── calculations.py          # Shared math helpers
+    │   ├── gather_metrics.py        # Metric collection
+    │   └── print_track.py           # Track / policy visualization
+    ├── tracks/                      # L / O / R / W track text files
+    └── visualized_results/          # Per-track, per-algorithm result plots and logs
+```
+
+## Running
+
+```bash
+cd Code/src
+python main.py
+```
+
+Experiment parameters — tracks to run, discount, exploration rate, episode count, number of experiments,
+etc. — are set in the `parameters` dictionary in `main.py`. Results and visualizations are written to
+`Code/visualized_results/`.
+
+### Requirements
+
+- Python 3
+- `numpy`, `matplotlib` (and `openpyxl` for the spreadsheet output)
 
 ## Results
-We determined that the value iteration algorithm resultedin the quickest race times during testing. Q learning based algorithm was sometimes quicker but the variability of this algorithm's runtime generally swayyed as slower than the value iteration algorithm. Finally the SARSA training model was the slowest. Additional results and analysis can be found in the report pdf. 
+
+**Value Iteration produced the fastest race times** overall. Q-Learning was occasionally quicker but far
+more variable, generally trailing Value Iteration, and SARSA was the slowest of the three. See
+[`Report.pdf`](Report.pdf) for the full analysis, and `Code/visualized_results/` for per-track learned
+policies and lap-time results.
